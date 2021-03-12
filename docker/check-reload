@@ -1,0 +1,12 @@
+#!/bin/bash
+while true; do
+    # create last-config if it doesn't exist
+    touch /tmp/last-config
+
+    # Get has for current config
+    md5sum /etc/squid/squid.conf > /tmp/current-config
+
+    # Check differences between current and last config. Reload squid if the config has changed
+    diff /tmp/current-config /tmp/last-config || (mv /tmp/current-config /tmp/last-config && kill -HUP `cat /var/run/squid.pid`)
+    sleep 2
+done
